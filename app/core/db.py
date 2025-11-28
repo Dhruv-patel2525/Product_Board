@@ -17,23 +17,11 @@ async_session = async_sessionmaker(
 
 # session generator
 async def get_session() -> AsyncSession:
-    """
-    Context-managed session for DB operations
-    Usage:
-        with get_session() as session:
-            ...
-    """
+
     async with async_session() as session:
-        yield session
+        async with session.begin():     # <-- THIS creates and commits/rolls back the tx
+            yield session
+
+        # yield session
 
 
-# optional: init DB (creates tables if not using Alembic)
-async def init_db() -> None:
-    """
-    Create all tables in the database.
-    Make sure all SQLModel models are imported before calling this function.
-    """
-    from app.models.todo import ToDo  # ensures all models are registered
-
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)

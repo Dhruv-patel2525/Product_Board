@@ -52,7 +52,7 @@ def sqlalchemy_integrity_error_handler(request: Request, exc: IntegrityError):
     error = ErrorInfo(
         code="DB_INTEGRITY_ERROR",
         message="Database integrity error",
-        details=None,
+        details=exc.args,
     )
     return JSONResponse(
         status_code=400,
