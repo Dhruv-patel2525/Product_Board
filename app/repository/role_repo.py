@@ -10,3 +10,4 @@ class RoleRepo:
         stmt=select(Role).where(Role.key==key).limit(1)
         response = await self.session.exec(stmt)
         return response.first().id
+    

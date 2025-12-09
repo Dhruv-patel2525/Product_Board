@@ -14,12 +14,23 @@ class Settings(BaseSettings):
 
     # security
     SECRET_KEY: str
-    DB_USER: str
+    # DB_USER: str
     DB_HOST: str
     DB_PORT: str
-    DB_NAME: str
-    DB_PASSWORD: str
+    # DB_NAME: str
+    # DB_PASSWORD: str
+    POSTGRES_DB:str
+    POSTGRES_USER:str 
+    POSTGRES_PASSWORD:str
+
     ALLOWED_ORIGINS: list[AnyHttpUrl] = []
+
+    REDIS_URL:str
+    CELERY_BROKER_URL:str
+    CELERY_RESULT_BACKEND:str
+
+    # FastAPI
+    FRONTEND_URL:str
 
     # db example
     DATABASE_URL: str | None = None
@@ -29,8 +40,8 @@ class Settings(BaseSettings):
         if self.DATABASE_URL:
             return self.DATABASE_URL
         # URL encode password in case it contains special chars like @
-        password_encoded = quote(self.DB_PASSWORD)
-        return f"postgresql+psycopg://{self.DB_USER}:{password_encoded}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        password_encoded = quote(self.POSTGRES_PASSWORD)
+        return f"postgresql+psycopg://{self.POSTGRES_PASSWORD}:{password_encoded}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
 
     class Config:
         env_file = ".env"

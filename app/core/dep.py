@@ -72,12 +72,12 @@ def require_roles(*allowed_roles: Role):
 
 
 def require_org_permission(permission_code:str):
-    async def dependency(id:int,
+    async def dependency(org_id:int,
                          current_user:User=Depends(get_current_user),
                          session:AsyncSession=Depends(get_session))->None:
         
         has_perm=await user_has_org_permission(
-            org_id=id,
+            org_id=org_id,
             user_id=current_user.id,
             session=session,
             permission_code=permission_code,

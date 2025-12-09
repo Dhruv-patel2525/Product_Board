@@ -50,9 +50,7 @@ Login User
 Register User
 Forgot Password?
 Register Organization
-View Organization
-
-
+View Organizations
 Create Products inisde orgs 
 Create / view /update feedback for product 
 with minimal role check

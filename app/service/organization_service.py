@@ -43,7 +43,6 @@ class OrganizationService:
                 message="Organization already exists",
                 details="An organization with this name already exists",
             )
-
         role_id=await self.role_service.getIdFromRoleKey(SystemRole.OWNER)
         org_membership=OrganizationMembership(user_id=user_id,org_id=organization_created.id,role_id=role_id,status=OrganizationStatus.PENDING)
         await self.membership_repo.createMembership(org_membership)
