@@ -1,7 +1,9 @@
 from datetime import datetime
-from sqlmodel import Column, Field, SQLModel
+from typing import TYPE_CHECKING
+from sqlmodel import Column, Field, Relationship, SQLModel
 from sqlalchemy import DateTime, func
-
+if TYPE_CHECKING:
+    from app.models.user import User
 
 class User(SQLModel,table=True):
     __tablename__="users"
@@ -22,5 +24,8 @@ class User(SQLModel,table=True):
         onupdate=func.now(),
         nullable=False
         )
+    )
+    accepted_invitations:list["Invitation"]=Relationship(
+        back_populates="accepted_user"
     )
     

@@ -16,7 +16,7 @@ from app.service.organization_service import OrganizationService
 
 settings = get_settings()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/user/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/user/token",auto_error=False)
 
 
 async def get_current_user(
@@ -58,6 +58,36 @@ async def get_current_user(
 
     return user
 
+async def get_current_user_optional(
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    session: AsyncSession = Depends(get_session),
+) -> User | None:
+    if not token:
+        return None
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM],
+        )
+        sub = payload.get("sub")
+        if not sub:
+            return None
+
+        user_id = int(sub)
+
+        result = await session.exec(select(User).where(User.id == user_id))
+        user = result.first()
+
+        return user
+    except jwt.ExpiredSignatureError:
+        return None  # treat expired token as no user
+    except jwt.InvalidTokenError:
+        return None  # treat invalid token as no user
+
+
+
 
 def require_roles(*allowed_roles: Role):
     async def _wrapper(current_user: User = Depends(get_current_user)) -> User:
@@ -72,12 +102,12 @@ def require_roles(*allowed_roles: Role):
 
 
 def require_org_permission(permission_code:str):
-    async def dependency(id:int,
+    async def dependency(org_id:int,
                          current_user:User=Depends(get_current_user),
                          session:AsyncSession=Depends(get_session))->None:
         
         has_perm=await user_has_org_permission(
-            org_id=id,
+            org_id=org_id,
             user_id=current_user.id,
             session=session,
             permission_code=permission_code,

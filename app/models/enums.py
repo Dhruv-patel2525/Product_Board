@@ -14,5 +14,7 @@ class SystemRole(enum.Enum):
     VIEWER="VIEWER"
 
 class InvitationStatus(enum.Enum):
-    APPROVED="APPROVED"
-    PENDING="PENDING"
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    CANCELLED = "CANCELLED"
+    EXPIRED = "EXPIRED"

@@ -1,7 +1,10 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 from sqlalchemy import Column, DateTime, func
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
+if TYPE_CHECKING:
+    from app.models.invitation import Invitation
 
 class Role(SQLModel,table=True):
     __tablename__="role"
@@ -16,3 +19,4 @@ class Role(SQLModel,table=True):
                          nullable=False),
         
     )
+    invitations:list["Invitation"]=Relationship(back_populates="role")

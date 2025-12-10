@@ -27,7 +27,7 @@ async def create_organization(current_user:Annotated[User,Depends(get_current_us
     organization=await service.create_organization(organization_request,user_id=current_user.id)
     return ApiResponse(success=True,data=organization)
 
-@router.put("/{id}",
+@router.put("/{org_id}",
             response_model=ApiResponse[OrganizationOut])
 async def updateOrganization(id:int,
                              current_user:Annotated[User,Depends(require_org_permission("org.manage_settings"))],
@@ -36,7 +36,7 @@ async def updateOrganization(id:int,
     organization_response=await service.updateOrganization(organization_request,org_id=id,user_id=current_user.id)
     return ApiResponse(success=True,data=organization_response)
 
-@router.delete("/{id}",
+@router.delete("/{org_id}",
                response_model=ApiResponse[str])
 async def delete_organization(id:int,
                               current_user:Annotated[User,Depends(require_org_permission("org.manage_settings"))],
