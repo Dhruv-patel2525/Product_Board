@@ -2,7 +2,6 @@ from typing import Optional
 from pydantic import EmailStr
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-
 from app.models.enums import InvitationStatus
 from app.models.invitation import Invitation
 class InvitationRepository:
@@ -17,4 +16,12 @@ class InvitationRepository:
         await self.session.flush()
         await self.session.refresh(invitation)
         return invitation
+    
+    async def get_invitation_by_token(self,token:str)->Optional[Invitation]:
+        stmt=select(Invitation).where(Invitation.token==token)
+        result=await self.session.exec(stmt)
+        return result.one_or_none()
+    
+    async def update_status_to_accepted(self,invitation:Invitation)->Invitation:
+        return await self.add(invitation)
     

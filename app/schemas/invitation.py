@@ -18,6 +18,7 @@ class InvitationRead(BaseModel):
     role_id: int
     status: InvitationStatus
     invited_at: datetime
+    token:str
 
     class Config:
         from_attributes = True

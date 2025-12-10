@@ -31,6 +31,11 @@ class Settings(BaseSettings):
 
     # FastAPI
     FRONTEND_URL:str
+    SMTP_PASSWORD:str
+    SMTP_HOST :str
+    SMTP_PORT:int
+    SMTP_USER :str
+    FROM_EMAIL:str
 
     # db example
     DATABASE_URL: str | None = None
@@ -41,7 +46,7 @@ class Settings(BaseSettings):
             return self.DATABASE_URL
         # URL encode password in case it contains special chars like @
         password_encoded = quote(self.POSTGRES_PASSWORD)
-        return f"postgresql+psycopg://{self.POSTGRES_PASSWORD}:{password_encoded}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
+        return f"postgresql+psycopg://{self.POSTGRES_USER}:{password_encoded}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
 
     class Config:
         env_file = ".env"
@@ -51,3 +56,5 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+settings=get_settings()
