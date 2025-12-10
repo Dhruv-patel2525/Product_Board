@@ -6,7 +6,7 @@ from .organization_membership import OrganizationMembership
 from .enums import OrganizationStatus
 from .role_permission import RolePermission
 from .invitation import Invitation
-from .feedback import Feedback
+from .feedback import FeedBack
 from .product_assignments import ProductAssignment
 from .products import Product
 from .comments import Comment

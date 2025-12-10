@@ -53,7 +53,7 @@ class OrganizationService:
         organization=await self.repo.getOrganizationByOrgId(org_id)
         if not organization:
             raise ConflictException(message="Organization not Found",details="Organization don't exist for the id")
-        for key,value in organization_request.model_dump().items():
+        for key,value in organization_request.model_dump(exclude_unset=True).items():
             setattr(organization,key,value)
         organization_response=await self.repo.save(organization)
         return OrganizationOut(**organization_response.model_dump())

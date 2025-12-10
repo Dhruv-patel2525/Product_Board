@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, DateTime, func, ForeignKeyConstraint,Uniq
 if TYPE_CHECKING:
     from app.models.products import Product
     from app.models.comments import Comment
-class Feedback(SQLModel, table=True):
+class FeedBack(SQLModel, table=True):
     __tablename__ = "feedback"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -19,7 +19,7 @@ class Feedback(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     org_id: int = Field(foreign_key="organization.id", nullable=False)
-    product_id: int = Field(foreign_key="products.id",nullable=False) 
+    product_id: int = Field(nullable=False) 
     created_by: int = Field(foreign_key="users.id", nullable=False)
 
     title: str = Field(sa_column=Column(String(255), nullable=False))
