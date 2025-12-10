@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 class Invitation(SQLModel, table=True):
     __tablename__ = "invitation"
     __table_args__=(
-        # You *might* end up with multiple statuses; if you only care about PENDING,
         # enforce "one pending per org+email" in service layer.
         UniqueConstraint("org_id","email","status",name="uq_invitation_org_email_status"),
         Index("ix_invitation_org_id_status","org_id","status"),
@@ -30,10 +29,8 @@ class Invitation(SQLModel, table=True):
 
     email: EmailStr = Field(default=None, nullable=False)
 
-    # FK to your Role table (OWNER / ADMIN / MEMBER rows)
     role_id: int = Field(foreign_key="role.id", nullable=False)
 
-    # Token used in invitation link
     token: str = Field(
         sa_column=Column(String(255), unique=True, nullable=False)
     )
@@ -54,7 +51,6 @@ class Invitation(SQLModel, table=True):
         )
     )
 
-    # Optional expiry
     expires_at: Optional[datetime.datetime] = Field(
         default=None,
         sa_column=Column(DateTime(timezone=True), nullable=True),
