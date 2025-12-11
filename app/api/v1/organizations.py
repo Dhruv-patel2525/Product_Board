@@ -1,13 +1,12 @@
-from importlib.resources import Anchor
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from app.core.db import get_session
 from app.core.dep import get_current_user, require_org_permission
-from app.models import user
 from app.models.user import User
 from app.schemas.common import ApiResponse
 from app.schemas.organization import OrganizationCreate, OrganizationOut
 from sqlmodel.ext.asyncio.session import AsyncSession
+from app.schemas.users import AuthenticatedUser
 from app.service.organization_service import OrganizationService
 
 def get_service(session:AsyncSession=Depends(get_session)):
@@ -30,7 +29,7 @@ async def create_organization(current_user:Annotated[User,Depends(get_current_us
 @router.put("/{org_id}",
             response_model=ApiResponse[OrganizationOut])
 async def updateOrganization(id:int,
-                             current_user:Annotated[User,Depends(require_org_permission("org.manage_settings"))],
+                             current_user:Annotated[AuthenticatedUser,Depends(require_org_permission("org.manage_settings"))],
                              organization_request:OrganizationCreate,
                              service:OrganizationService=Depends(get_service))->ApiResponse[OrganizationOut]:
     organization_response=await service.updateOrganization(organization_request,org_id=id,user_id=current_user.id)
@@ -39,7 +38,7 @@ async def updateOrganization(id:int,
 @router.delete("/{org_id}",
                response_model=ApiResponse[str])
 async def delete_organization(id:int,
-                              current_user:Annotated[User,Depends(require_org_permission("org.manage_settings"))],
+                              current_user:Annotated[AuthenticatedUser,Depends(require_org_permission("org.manage_settings"))],
                               service:Annotated[OrganizationService,Depends(get_service)])->ApiResponse[str]:
     await service.delete_organization(org_id=id,user_id=current_user.id)
     return ApiResponse(success=True,data="Deleted successfully")

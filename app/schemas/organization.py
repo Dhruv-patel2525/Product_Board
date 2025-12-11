@@ -11,3 +11,5 @@ class OrganizationOut(BaseModel):
     id: int
     name: str
     email: EmailStr
+    class Config:
+        from_attributes=True

@@ -43,7 +43,7 @@ class UserService:
         user=await self.repo.getUserById(id)
         if not user:
             raise ConflictException(message="Id not Found",details="User does not exists")
-        for key,value in userUpdate.model_dump().items():
+        for key,value in userUpdate.model_dump(exclude_unset=True).items():
             setattr(user,key,value)
         userOut = await self.repo.save(user)
         userOut=UserOut(**userOut.model_dump())
