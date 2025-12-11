@@ -2,8 +2,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from sqlalchemy import Column, DateTime, func, null
 from sqlmodel import Field, Relationship, SQLModel
+
 if TYPE_CHECKING:
     from app.models.invitation import Invitation
+    from app.models.products import Product
+
 
 class Organization(SQLModel,table=True):
     __tablename__="organization"
@@ -15,3 +18,4 @@ class Organization(SQLModel,table=True):
         sa_column=Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
     )
     invitations:list["Invitation"]=Relationship(back_populates="organization")
+    products:list["Product"]=Relationship(back_populates="organization")

@@ -1,12 +1,11 @@
 # app/schemas/product.py
 from __future__ import annotations
-
 from datetime import datetime
 from typing import Optional, List
-
 from sqlmodel import SQLModel
-
 from app.schemas.feedback import FeedbackRead
+from app.schemas.organization import OrganizationOut
+from app.schemas.users import UserOut
 
 
 # ---------- Base ----------
@@ -44,11 +43,17 @@ class ProductRead(ProductBase):
     created_by: int
     created_at: datetime
     updated_at: datetime
-
     class Config:
         from_attributes = True  # allow reading from ORM objects
 
-
+class ProductReadDetailed(ProductBase):
+    id:int
+    organization:OrganizationOut
+    created_by_user:UserOut
+    created_at:datetime
+    updated_at:datetime
+    class Config:
+        from_attributes=True
 # ---------- Nested read variants ----------
 
 # Forward-declare to avoid circular imports

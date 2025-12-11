@@ -10,3 +10,4 @@ from .feedback import FeedBack
 from .product_assignments import ProductAssignment
 from .products import Product
 from .comments import Comment
+from .enums import FeedbackStatus

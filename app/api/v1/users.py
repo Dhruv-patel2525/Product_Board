@@ -4,10 +4,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 from celery_app import ping
 from app.core.db import get_session
-from app.core.dep import get_current_user,get_current_user_optional
+from app.core.dep import get_current_user, get_current_user_optional
 from app.models.user import User
 from app.schemas.common import ApiResponse, Token
-from app.schemas.users import UserCreate, UserOut, UserUpdate
+from app.schemas.users import AuthenticatedUser, UserCreate, UserOut, UserUpdate
 from app.service.user_service import UserService
 from celery_app import celery_app
 router = APIRouter(prefix="/auth/user", tags=["users"])

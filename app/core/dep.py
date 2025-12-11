@@ -12,6 +12,7 @@ from app.models.user import User
 from app.core.config import get_settings
 from app.models.role import Role
 from app.repository.auth import user_has_org_permission
+from app.schemas.users import AuthenticatedUser
 from app.service.organization_service import OrganizationService
 
 settings = get_settings()
@@ -101,7 +102,7 @@ def require_roles(*allowed_roles: Role):
     return _wrapper
 
 
-def require_org_permission(permission_code:str):
+def require_org_permission(*permission_codes:str):
     async def dependency(org_id:int,
                          current_user:User=Depends(get_current_user),
                          session:AsyncSession=Depends(get_session))->None:
@@ -110,13 +111,17 @@ def require_org_permission(permission_code:str):
             org_id=org_id,
             user_id=current_user.id,
             session=session,
-            permission_code=permission_code,
+            # permission_code=permission_code,
         )
+        if not any(code in has_perm for code in permission_codes):
+            raise HTTPException(status_code=403, detail="Not enough permissions")
+
         if not has_perm:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Not Authorized for these org"
             ) 
-        return current_user
+        authenticated_user=AuthenticatedUser(**current_user.model_dump(),org_permissions=has_perm)
+        return authenticated_user
     return dependency
 

@@ -3,6 +3,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, List
 from sqlalchemy import Column, String, DateTime, func, ForeignKeyConstraint,UniqueConstraint
 
+from app.models.enums import FeedbackStatus
+
 if TYPE_CHECKING:
     from app.models.products import Product
     from app.models.comments import Comment
@@ -21,12 +23,11 @@ class FeedBack(SQLModel, table=True):
     org_id: int = Field(foreign_key="organization.id", nullable=False)
     product_id: int = Field(nullable=False) 
     created_by: int = Field(foreign_key="users.id", nullable=False)
-
     title: str = Field(sa_column=Column(String(255), nullable=False))
+    status: FeedbackStatus = Field(default=FeedbackStatus.NEW)
     description: Optional[str] = Field(
         sa_column=Column(String(255), nullable=True)
     )
-
     created_at: datetime = Field(
         sa_column=Column(
             DateTime(timezone=True),
@@ -42,7 +43,5 @@ class FeedBack(SQLModel, table=True):
             nullable=False,
         )
     )
-
     product: Optional["Product"] = Relationship(back_populates="feedback_items")
     comments: List["Comment"] = Relationship(back_populates="feedback")
-

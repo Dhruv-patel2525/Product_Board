@@ -18,3 +18,12 @@ class InvitationStatus(enum.Enum):
     ACCEPTED = "ACCEPTED"
     CANCELLED = "CANCELLED"
     EXPIRED = "EXPIRED"
+
+class FeedbackStatus(enum.Enum):
+    NEW = "new"
+    UNDER_REVIEW = "under_review"
+    PLANNED = "planned"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    REJECTED = "rejected"
+    DUPLICATE = "duplicate"

@@ -1,11 +1,9 @@
 # app/schemas/feedback.py
-from __future__ import annotations
-
 from datetime import datetime
+# from typing import Optional, List
 from typing import Optional, List
-
 from sqlmodel import SQLModel
-
+from app.models.enums import FeedbackStatus
 from app.schemas.comment import CommentRead
 
 
@@ -32,8 +30,6 @@ class FeedbackUpdate(SQLModel):
     """
     title: Optional[str] = None
     description: Optional[str] = None
-    # if later you allow status changes from API, add:
-    # status: Optional[str] = None
 
 
 # ---------- Read ----------
@@ -45,6 +41,7 @@ class FeedbackRead(FeedbackBase):
     created_by: int
     created_at: datetime
     updated_at: datetime
+    status:FeedbackStatus
 
     class Config:
         from_attributes = True
@@ -52,7 +49,8 @@ class FeedbackRead(FeedbackBase):
 
 # ---------- Nested read variants ----------
 
-
+class FeedbackStatusUpdate(SQLModel):
+    status:FeedbackStatus
 
 class FeedbackReadWithComments(FeedbackRead):
     comments: List["CommentRead"] = []

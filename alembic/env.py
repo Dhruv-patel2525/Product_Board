@@ -8,6 +8,7 @@ from sqlmodel import SQLModel
 
 from app.core.config import get_settings
 from app.models.enums import OrganizationStatus
+from app.models.enums import FeedbackStatus
 # from app.models.invitation
 from app import models
 # this is the Alembic Config object, which provides

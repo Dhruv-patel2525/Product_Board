@@ -1,26 +1,32 @@
 from sqlalchemy.exc import IntegrityError
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.exceptions import ConflictException, NotFoundException
+from app.models import organization
 from app.models.products import Product
-from app.models.user import User
 from app.repository.product_repository import ProductRepository
-from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
+from app.schemas.organization import OrganizationOut
+from app.schemas.product import ProductCreate, ProductRead, ProductReadDetailed, ProductUpdate
+from app.schemas.users import AuthenticatedUser, UserOut
 class ProductService:
     def __init__(self,session:AsyncSession):
         self.repo=ProductRepository(session)
-    async def get_product_by_product_id(self,org_id:int,product_id:int)->ProductRead:
+    async def get_product_by_product_id(self,org_id:int,product_id:int)->ProductReadDetailed:
         
-        product=await self.repo.get_product_by_product_id(org_id,product_id)
+        product=await self.repo.get_detail_product_by_product_id(org_id,product_id)
         if not product:
             raise NotFoundException(message="Product Not Found",details="Invalid product or org_id ")
-        return ProductRead.model_validate(product)
+        print(product)
+        product_read_detail=ProductReadDetailed(**product.model_dump(exclude=["organization","created_by_user"]),
+                                                organization=OrganizationOut.model_validate(product.organization),
+                                                created_by_user=UserOut.model_validate(product.created_by_user))
+        return product_read_detail
     
     async def get_product_list_by_org_id(self,org_id:int)->list[ProductRead]:
         product_list=await self.repo.get_product_list_by_org_id(org_id)
         product_read=[ProductRead.model_validate(product) for product in product_list]
         return product_read
         
-    async def create_product_by_org_id(self,org_id:int,product_create:ProductCreate,current_user:User)->ProductRead:
+    async def create_product_by_org_id(self,org_id:int,product_create:ProductCreate,current_user:AuthenticatedUser)->ProductRead:
         product=Product(**product_create.model_dump(),org_id=org_id,created_by=current_user.id)
         try:
             product_created=await self.repo.save(product)

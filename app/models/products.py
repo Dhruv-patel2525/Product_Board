@@ -3,9 +3,13 @@ from typing import TYPE_CHECKING, Optional, List
 
 from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import Column, String, DateTime, func, UniqueConstraint
+
 if TYPE_CHECKING:
     from app.models.product_assignments import ProductAssignment
     from app.models.feedback import FeedBack
+    from app.models.organization import Organization
+    from app.models.user import User
+
 
 class Product(SQLModel, table=True):
     __tablename__ = "products"
@@ -43,3 +47,5 @@ class Product(SQLModel, table=True):
 
     assignments: List["ProductAssignment"] = Relationship(back_populates="product")
     feedback_items: List["FeedBack"] = Relationship(back_populates="product")
+    organization:"Organization"=Relationship(back_populates="products")
+    created_by_user:"User"=Relationship(back_populates="products")
