@@ -13,7 +13,7 @@ class UserService:
     def __init__(self,session:AsyncSession):
         self.repo=UserRepository(session)
     
-    async def createUser(self,userCreate:UserCreate)->UserOut:
+    async def create_user(self,userCreate:UserCreate)->UserOut:
         user= await self.repo.getUserByUserName(username=userCreate.username)
         if user:
             raise ConflictException(message="Conflict",details="User Already Exists")

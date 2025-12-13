@@ -27,7 +27,7 @@ async def registerUser(userCreate:UserCreate,current_user:Annotated[User|None,De
             detail="Logout before creating a new account."
         )
 
-    user=await service.createUser(userCreate)    
+    user=await service.create_user(userCreate)    
     return ApiResponse(success=True,data=user)
 
 @router.post("/login",response_model=ApiResponse[Token])

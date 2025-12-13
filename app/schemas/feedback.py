@@ -5,6 +5,7 @@ from typing import Optional, List
 from sqlmodel import SQLModel
 from app.models.enums import FeedbackStatus
 from app.schemas.comment import CommentRead
+from pydantic import ConfigDict
 
 
 # ---------- Base ----------
@@ -42,9 +43,7 @@ class FeedbackRead(FeedbackBase):
     created_at: datetime
     updated_at: datetime
     status:FeedbackStatus
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Nested read variants ----------
@@ -54,9 +53,7 @@ class FeedbackStatusUpdate(SQLModel):
 
 class FeedbackReadWithComments(FeedbackRead):
     comments: List["CommentRead"] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class FeedbackVoteCreate(SQLModel):
     value:bool=True
