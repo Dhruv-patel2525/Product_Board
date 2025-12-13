@@ -78,3 +78,6 @@ markers = [
 ]
 asyncio_mode = "auto"
 pythonpath = ["."]
+filterwarnings = [
+  "ignore:'crypt' is deprecated and slated for removal in Python 3.13:DeprecationWarning:passlib.utils",
+]

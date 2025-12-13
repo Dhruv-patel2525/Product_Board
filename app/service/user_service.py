@@ -30,14 +30,14 @@ class UserService:
         if not user:
             raise NotFoundException(message='NOT_FOUND',details="Username not found")
         elif not user.is_active:
-            raise NotFoundException(message="Inactive",details="Inactive user")
-        elif not verify_password(password,user.password_hash):
+            raise ConflictException(message="Inactive",details="Inactive user")
+        elif not verify_password(plain_password=password,hashed_password=user.password_hash):
             raise ConflictException(message="Incorrect Password",details="Wrong password")
         userout = UserOut(**user.model_dump())
         token = create_access_token(subject=user.id, user=userout)
         return Token(access_token=token)
     
-    async def updateUser(self,id:int,userUpdate:UserUpdate,current_user:User)->UserOut:
+    async def update_user(self,id:int,userUpdate:UserUpdate,current_user:User)->UserOut:
         if current_user.id!=id:
             raise ConflictException(message="Wrong user id for logged in user",details="Invalid user id for logged in user")
         user=await self.repo.getUserById(id)

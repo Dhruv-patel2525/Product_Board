@@ -16,9 +16,9 @@ class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(BaseModel):
-    name:str=Field(json_schema_extra={"example":"Updated Name"})
-    username:str=Field(json_schema_extra={"example":"Updated username"})
-    is_active:boolean=Field(default=True)
+    name:Optional[str]=Field(default=None,json_schema_extra={"example":"Updated Name"})
+    username:Optional[str]=Field(default=None,json_schema_extra={"example":"Updated username"})
+    is_active:Optional[boolean]=Field(default=None)
     
 class AuthenticatedUser(UserOut):
     is_active:bool=True
