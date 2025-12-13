@@ -57,3 +57,6 @@ class FeedbackReadWithComments(FeedbackRead):
 
     class Config:
         from_attributes = True
+
+class FeedbackVoteCreate(SQLModel):
+    value:bool=True

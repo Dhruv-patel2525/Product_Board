@@ -1,8 +1,11 @@
 from typing import Optional
+from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.models import user
 from app.models.feedback import FeedBack
+from app.models.feedback_votes import FeedBackVote
 class FeedBackRepository:
     def __init__(self,session:AsyncSession):
         self.session=session
@@ -25,4 +28,18 @@ class FeedBackRepository:
     async def delete(self,feedback:FeedBack)->None:
         await self.session.delete(feedback)
         await self.session.flush()
+    async def get_feedback_vote_by_id(self,feedback_id:int,user_id:int)->Optional[FeedBackVote]:
+        stmt=select(FeedBackVote).where(FeedBackVote.feedback_id==feedback_id,
+                                        FeedBackVote.user_id==user_id)
+        result = await self.session.exec(stmt)
+        return result.one_or_none()
+    async def upvote_feedback(self,feedback_vote:FeedBackVote)->None:
+        self.session.add(feedback_vote)
+        await self.session.flush()
+    
+    async def get_feedback_vote_count(self,feedback_id:int)->int:
+        stmt=select(func.count()).select_from(FeedBackVote).where(FeedBackVote.feedback_id==feedback_id,
+                                        FeedBackVote.value==True)
+        result=await self.session.exec(stmt)
+        return result.one_or_none()
         

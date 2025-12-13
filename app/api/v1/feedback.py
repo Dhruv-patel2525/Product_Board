@@ -1,9 +1,10 @@
 from typing import Annotated
+from unittest import removeResult
 from fastapi import APIRouter,Depends
 from app.core.db import get_session
 from app.core.dep import require_org_permission
 from app.schemas.common import ApiResponse
-from app.schemas.feedback import FeedbackCreate, FeedbackRead, FeedbackStatusUpdate, FeedbackUpdate
+from app.schemas.feedback import FeedbackCreate, FeedbackRead, FeedbackStatusUpdate, FeedbackUpdate, FeedbackVoteCreate
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.schemas.users import AuthenticatedUser
 from app.service.feedback_service import FeedBackService
@@ -14,6 +15,10 @@ from app.service.feedback_service import FeedBackService
 # {"code": "feedback.delete_own", "description": "Delete own feedback"},
 # {"code": "feedback.delete_all", "description": "Delete any feedback"},
 # {"code": "feedback.change_status", "description": "Change feedback status"},
+
+# {"code": "vote.create", "description": "Add votes to feedback"},
+# {"code": "vote.revoke", "description": "Remove own votes"},
+# {"code": "vote.view_counts", "description": "View vote counts and analytics"},
 def get_service(session:AsyncSession=Depends(get_session)):
     return FeedBackService(session)
 
@@ -77,4 +82,29 @@ async def change_the_status(org_id:int,
                                                  feedback_id=feedback_id,
                                                  current_user=current_user,
                                                  feedback_status_update=feedback_status_update)
+    return ApiResponse(success=True,data=result)
+
+@router.post("/{feedback_id}/votes",response_model=ApiResponse[str])
+async def upvote_feedback(org_id:int,
+                          product_id:int,
+                          feedback_id:int,
+                          feedback_vote_create:FeedbackVoteCreate,
+                          current_user:Annotated[AuthenticatedUser,Depends(require_org_permission("vote.create","vote.revoke"))],
+                          feedback_service:Annotated[FeedBackService,Depends(get_service)])->ApiResponse[str]:
+    count=await feedback_service.upvote_feedback(org_id=org_id,
+                                           product_id=product_id,
+                                           feedback_id=feedback_id,
+                                           feedback_vote_create=feedback_vote_create,
+                                           current_user=current_user)
+    return ApiResponse(success=True,data=count)
+
+@router.get("/{feedback_id}/votes",response_model=ApiResponse[int])
+async def count_votes_for_feedback(org_id:int,
+                                   product_id:int,
+                                   feedback_id:int,
+                                   current_user:Annotated[AuthenticatedUser,Depends(require_org_permission("vote.view_counts"))],
+                                   feedback_service:Annotated[FeedBackService,Depends(get_service)])->ApiResponse[int]:
+    result=await feedback_service.get_feedback_votes_counts(org_id=org_id,
+                                                     product_id=product_id,
+                                                     feedback_id=feedback_id)
     return ApiResponse(success=True,data=result)
