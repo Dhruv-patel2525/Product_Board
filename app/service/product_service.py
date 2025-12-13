@@ -21,8 +21,8 @@ class ProductService:
                                                 created_by_user=UserOut.model_validate(product.created_by_user))
         return product_read_detail
     
-    async def get_product_list_by_org_id(self,org_id:int)->list[ProductRead]:
-        product_list=await self.repo.get_product_list_by_org_id(org_id)
+    async def get_product_list_by_org_id(self,org_id:int,page:int,limit:int,q:str)->list[ProductRead]:
+        product_list=await self.repo.get_product_list_by_org_id(org_id,page,limit,q)
         product_read=[ProductRead.model_validate(product) for product in product_list]
         return product_read
         

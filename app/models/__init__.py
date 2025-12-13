@@ -11,3 +11,4 @@ from .product_assignments import ProductAssignment
 from .products import Product
 from .comments import Comment
 from .enums import FeedbackStatus
+from .feedback_votes import FeedBackVote

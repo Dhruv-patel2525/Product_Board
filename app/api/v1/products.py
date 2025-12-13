@@ -1,5 +1,5 @@
-from typing import Annotated
-from fastapi import APIRouter,Depends
+from typing import Annotated, Optional
+from fastapi import APIRouter,Depends, Query
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.db import get_session
 from app.core.dep import require_org_permission
@@ -29,8 +29,12 @@ async def get_product_by_product_id(org_id:int,
 @router.get("/products",response_model=ApiResponse[list[ProductRead]])
 async def get_product_list_by_org_id(org_id:int,
                                     current_user:Annotated[AuthenticatedUser,Depends(require_org_permission("product.view"))],
-                                    product_service:Annotated[ProductService,Depends(get_service)])->ApiResponse[list[ProductRead]]:
-    result=await product_service.get_product_list_by_org_id(org_id)
+                                    product_service:Annotated[ProductService,Depends(get_service)],
+                                    page:int=Query(default=0,ge=0,le=100),
+                                    limit:int=Query(default=20,ge=1,le=100),
+                                    q:Optional[str]=Query(default=None,description="Search in title/description")
+                                    )->ApiResponse[list[ProductRead]]:
+    result=await product_service.get_product_list_by_org_id(org_id,page,limit,q)
     return ApiResponse(success=True,data=result)
 
 @router.post("/products",response_model=ApiResponse[ProductRead])
