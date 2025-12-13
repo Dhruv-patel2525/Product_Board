@@ -6,6 +6,7 @@ from sqlmodel import SQLModel
 from app.schemas.feedback import FeedbackRead
 from app.schemas.organization import OrganizationOut
 from app.schemas.users import UserOut
+from pydantic import ConfigDict
 
 
 # ---------- Base ----------
@@ -43,8 +44,7 @@ class ProductRead(ProductBase):
     created_by: int
     created_at: datetime
     updated_at: datetime
-    class Config:
-        from_attributes = True  # allow reading from ORM objects
+    model_config = ConfigDict(from_attributes=True)
 
 class ProductReadDetailed(ProductBase):
     id:int
@@ -52,8 +52,7 @@ class ProductReadDetailed(ProductBase):
     created_by_user:UserOut
     created_at:datetime
     updated_at:datetime
-    class Config:
-        from_attributes=True
+    model_config = ConfigDict(from_attributes=True)
 # ---------- Nested read variants ----------
 
 # Forward-declare to avoid circular imports
@@ -63,6 +62,4 @@ class ProductReadDetailed(ProductBase):
 
 class ProductReadWithFeedback(ProductRead):
     feedback_items: List["FeedbackRead"] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

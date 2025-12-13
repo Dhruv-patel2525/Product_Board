@@ -1,6 +1,6 @@
 # app/schemas/invitation.py
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import ConfigDict, BaseModel, EmailStr
 from enum import Enum
 from app.models.enums import InvitationStatus, SystemRole
 from app.schemas.common import ApiResponse
@@ -19,9 +19,7 @@ class InvitationRead(BaseModel):
     status: InvitationStatus
     invited_at: datetime
     token:str
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class InvitationAccept(BaseModel):

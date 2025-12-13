@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pydantic import AnyHttpUrl
-from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict, BaseSettings
 from urllib.parse import quote
 
 
@@ -47,10 +47,7 @@ class Settings(BaseSettings):
         # URL encode password in case it contains special chars like @
         password_encoded = quote(self.POSTGRES_PASSWORD)
         return f"postgresql+psycopg://{self.POSTGRES_USER}:{password_encoded}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 @lru_cache

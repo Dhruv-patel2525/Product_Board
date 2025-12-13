@@ -27,7 +27,7 @@ async def registerUser(userCreate:UserCreate,current_user:Annotated[User|None,De
             detail="Logout before creating a new account."
         )
 
-    user=await service.createUser(userCreate)    
+    user=await service.create_user(userCreate)    
     return ApiResponse(success=True,data=user)
 
 @router.post("/login",response_model=ApiResponse[Token])
@@ -39,9 +39,9 @@ async def login(formData:Annotated[OAuth2PasswordRequestForm,Depends()],service:
 async def token(formData:Annotated[OAuth2PasswordRequestForm,Depends()],service:UserService=Depends(get_service))->Token:
     return await service.login(username=formData.username,password=formData.password)
 
-@router.put("/update-user/{id:int}",response_model=ApiResponse[UserOut])
-async def updateUser(id:int,userUpdate:UserUpdate,current_user:Annotated[User,Depends(get_current_user)],service:UserService=Depends(get_service))->ApiResponse[UserOut]:
-    userOut=await service.updateUser(id=id,userUpdate=userUpdate,current_user=current_user)
+@router.patch("/users/{id}",response_model=ApiResponse[UserOut])
+async def update_user(id:int,userUpdate:UserUpdate,current_user:Annotated[User,Depends(get_current_user)],service:UserService=Depends(get_service))->ApiResponse[UserOut]:
+    userOut=await service.update_user(id=id,userUpdate=userUpdate,current_user=current_user)
     return ApiResponse(success=True,data=userOut)
 
 @router.delete("/delete-user/{id}",response_model=ApiResponse[str])
